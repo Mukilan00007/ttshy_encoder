@@ -5,7 +5,7 @@ module encoder_256to8_tb;
 reg  [255:0] in;
 wire [7:0] out;
 
-encoder_256to8 uut (
+tt_um_encoder_256to8 uut (
     .in(in),
     .out(out)
 );
