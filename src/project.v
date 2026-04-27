@@ -1,4 +1,4 @@
-module encoder_256to8 (
+module tt_um_encoder_256to8 (
     input  [255:0] in,
     output reg [7:0] out
 );
