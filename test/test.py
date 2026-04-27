@@ -2,39 +2,29 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import cocotb
-from cocotb.clock import Clock
-from cocotb.triggers import ClockCycles
-
+from cocotb.triggers import Timer
 
 @cocotb.test()
-async def test_project(dut):
-    dut._log.info("Start")
+async def test_encoder(dut):
+    dut._log.info("Starting 256-to-8 Encoder Test")
 
-    # Set the clock period to 10 us (100 KHz)
-    clock = Clock(dut.clk, 10, unit="us")
-    cocotb.start_soon(clock.start())
+    # Define test cases: (input_bit_index, expected_output)
+    test_cases = [0, 1, 2, 10, 50, 100, 200, 255]
 
-    # Reset
-    dut._log.info("Reset")
-    dut.ena.value = 1
-    dut.ui_in.value = 0
-    dut.uio_in.value = 0
-    dut.rst_n.value = 0
-    await ClockCycles(dut.clk, 10)
-    dut.rst_n.value = 1
+    for bit_index in test_cases:
+        # Construct a 256-bit value with only one bit set
+        input_value = 1 << bit_index
+        
+        # Apply input to the DUT
+        dut.in_.value = input_value
 
-    dut._log.info("Test project behavior")
+        # Wait for a small amount of time for combinational logic to settle
+        await Timer(1, units="ns")
 
-    # Set the input values you want to test
-    dut.ui_in.value = 20
-    dut.uio_in.value = 30
+        # Log the current check
+        dut._log.info(f"Input Bit: {bit_index} | Output: {int(dut.out.value)}")
 
-    # Wait for one clock cycle to see the output values
-    await ClockCycles(dut.clk, 1)
+        # Assert the output matches the index
+        assert int(dut.out.value) == bit_index, f"Error at bit {bit_index}: expected {bit_index} but got {int(dut.out.value)}"
 
-    # The following assersion is just an example of how to check the output values.
-    # Change it to match the actual expected output of your module:
-    assert dut.uo_out.value == 50
-
-    # Keep testing the module by changing the input values, waiting for
-    # one or more clock cycles, and asserting the expected output values.
+    dut._log.info("All test cases passed!")
