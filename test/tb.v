@@ -1,46 +1,34 @@
-`timescale 1ns/1ps
+`default_nettype none
+`timescale 1ns / 1ps
 
-module encoder_256to8_tb;
+/* This testbench is used by the gate-level simulation (GL) */
+module tb ();
 
-reg  [255:0] in;
-wire [7:0] out;
+  // Standard Tiny Tapeout pins
+  reg clk;
+  reg rst_n;
+  reg ena;
+  reg [7:0] ui_in;
+  reg [7:0] uio_in;
+  wire [7:0] uo_out;
+  wire [7:0] uio_out;
+  wire [7:0] uio_oe;
 
-tt_um_encoder_256to8 uut (
-    .in(in),
-    .out(out)
-);
-
-initial begin
-    $display("Time\tOutput");
-    $monitor("%0t\t%d", $time, out);
-
-    // Test cases
-    in = 256'b0; 
-    in[0]   = 1'b1; #10;
-
-    in = 256'b0; 
-    in[1]   = 1'b1; #10;
-
-    in = 256'b0; 
-    in[2]   = 1'b1; #10;
-
-    in = 256'b0; 
-    in[10]  = 1'b1; #10;
-
-    in = 256'b0; 
-    in[50]  = 1'b1; #10;
-
-    in = 256'b0; 
-    in[100] = 1'b1; #10;
-
-    in = 256'b0; 
-    in[200] = 1'b1; #10;
-
-    in = 256'b0; 
-    in[255] = 1'b1; #10;
-
-    $finish;
-end
+  // Replace "tt_um_encoder_256to8" with your actual top module name if different
+  tt_um_encoder_256to8 user_project (
+`ifdef GL_TEST
+      .VPWR(1'b1),  // Power pins for Gate Level
+      .VGND(1'b0),
+`endif
+      .ui_in  (ui_in),
+      .uo_out (uo_out),
+      .uio_in (uio_in),
+      .uio_out(uio_out),
+      .uio_oe (uio_oe),
+      .ena    (ena),
+      .clk    (clk),
+      .rst_n  (rst_n)
+  );
 
 endmodule
 
