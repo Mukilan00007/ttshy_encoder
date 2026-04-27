@@ -12,7 +12,7 @@ project:
   tiles: "1x1"          
 
   # Replace 'yourusername' with your actual GitHub username
-  top_module:  "encoder_256to8"
+  top_module:  "tt_um_encoder_256to8"
 
   source_files:
     - "project.v"
